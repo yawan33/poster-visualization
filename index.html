@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Movie Poster Visualization</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  body {
+    margin: 0;
+    background-color: #000;
+    font-family: sans-serif;
+    overflow: auto;
+  }
+  #controls {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(20,20,20,0.8);
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 3000; /* 控制面板永远在最上 */
+  }
+  #controls select, #controls input {
+    margin-bottom: 5px;
+    width: 140px;
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 2px 4px;
+  }
+  #controls button {
+    background: #444;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  .poster {
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: 3px;
+    z-index: 1000; /* 海报 z-index */
+    will-change: transform; /* GPU 加速动画 */
+  }
+  .tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    max-width: 220px;
+    z-index: 2000; /* tooltip 显示在海报前面 */
+  }
+</style>
+</head>
+<body>
+
+<div id="controls">
+  <label>Genre: 
+    <select id="filterGenre">
+      <option value="">All</option>
+    </select>
+  </label><br>
+
+  <label>Year: <input type="text" id="filterYear" placeholder="2020"></label><br>
+
+  <label>Country: 
+    <select id="filterCountry">
+      <option value="">All</option>
+    </select>
+  </label><br>
+
+  <button id="applyFilter">Apply</button>
+</div>
+
+<div id="tooltip" class="tooltip" style="opacity:0;"></div>
+
+<script>
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+let allData = [];
+let displayedData = [];
+
+const posterContainer = d3.select('body');
+const tooltip = d3.select('#tooltip');
+
+function loadData() {
+  d3.json('vis_data.json').then(data => {
+    allData = data;
+    displayedData = allData;
+    populateFilters(); // 填充下拉选项
+    renderPosters();
+  });
+}
+
+function populateFilters() {
+  const genresSet = new Set();
+  const countriesSet = new Set();
+
+  allData.forEach(d => {
+    d.Genres.forEach(g => genresSet.add(g));
+    d.Countries.forEach(c => countriesSet.add(c));
+  });
+
+  const genreSelect = d3.select('#filterGenre');
+  genresSet.forEach(g => {
+    genreSelect.append('option').attr('value', g).text(g);
+  });
+
+  const countrySelect = d3.select('#filterCountry');
+  countriesSet.forEach(c => {
+    countrySelect.append('option').attr('value', c).text(c);
+  });
+}
+
+function renderPosters() {
+  d3.selectAll('.poster').remove();
+
+  let dataToShow = displayedData.slice();
+  const maxPosters = 1000;
+  if (dataToShow.length > maxPosters) {
+    dataToShow = d3.shuffle(dataToShow).slice(0, maxPosters);
+  }
+
+  const boxOfficeValues = dataToShow.map(d => +d.Worldwide_Box_Office);
+  const sizeScale = d3.scaleSqrt()
+    .domain([0, d3.max(boxOfficeValues)])
+    .range([60, 150]); // 最小 60px，最大 150px
+
+  dataToShow.forEach(d => {
+    const x = Math.random() * (width - 150);
+    const y = Math.random() * (height - 150);
+
+    posterContainer.append('img')
+      .attr('src', d.Poster_URL)
+      .attr('class', 'poster')
+      .style('width', sizeScale(d.Worldwide_Box_Office) + 'px')
+      .style('left', x + 'px')
+      .style('top', y + 'px')
+      .on('mouseover', function(event){
+        d3.select(this).style('transform','scale(1.3)');
+        tooltip.style('opacity',1)
+               .html(`<strong>${d.Title}</strong><br>
+                      Director: ${d.Director}<br>
+                      Year: ${d.Year}<br>
+                      Box Office: $${d.Worldwide_Box_Office}`)
+               .style('left',(event.pageX+10)+'px')
+               .style('top',(event.pageY+10)+'px');
+      })
+      .on('mousemove', function(event){
+        tooltip.style('left',(event.pageX+10)+'px')
+               .style('top',(event.pageY+10)+'px');
+      })
+      .on('mouseout', function(){
+        d3.select(this).style('transform','scale(1)');
+        tooltip.style('opacity',0);
+      })
+      .on('click', function() {
+        // 点击海报置顶
+        d3.selectAll('.poster').style('z-index', 1000);
+        d3.select(this).style('z-index', 3000);
+      });
+  });
+}
+
+// 筛选功能
+d3.select('#applyFilter').on('click', function(){
+  const genreFilter = d3.select('#filterGenre').property('value').toLowerCase();
+  const yearFilter = d3.select('#filterYear').property('value');
+  const countryFilter = d3.select('#filterCountry').property('value').toLowerCase();
+
+  displayedData = allData.filter(d => {
+    let ok = true;
+    if(genreFilter) ok = ok && d.Genres.map(g => g.toLowerCase()).includes(genreFilter);
+    if(yearFilter) ok = ok && d.Year.toString() === yearFilter;
+    if(countryFilter) ok = ok && d.Countries.map(c => c.toLowerCase()).includes(countryFilter);
+    return ok;
+  });
+
+  renderPosters();
+});
+
+// 调整窗口大小时重新渲染
+window.addEventListener('resize', () => {
+  renderPosters();
+});
+
+loadData();
+</script>
+</body>
+</html>
+
