@@ -39,6 +39,14 @@
   #btn-search { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #000; padding: 8px 24px; }
   #btn-search:hover { transform: scale(1.05); filter: brightness(1.2); }
   
+  /* Reset Button (Home) */
+  #btn-reset-filters {
+      background: transparent; color: #666; border: 1px solid #444;
+      padding: 7px 12px; border-radius: 20px; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+  }
+  #btn-reset-filters:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.1); }
+
   /* Pink Gradient Button */
   #btn-galaxy { 
       background: linear-gradient(135deg, #ff00cc, #ff6699); 
@@ -121,10 +129,24 @@
   }
   #btn-analyze:hover { filter: brightness(1.1); transform: scale(1.05); }
 
+  /* Back Button on Chart Page */
+  #btn-back-galaxy-top {
+      background: rgba(255, 0, 204, 0.1); 
+      color: #ff00cc; border: 1px solid #ff00cc; 
+      padding: 7px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; 
+      font-size: 11px;
+      display: flex; align-items: center; gap: 5px;
+  }
+  #btn-back-galaxy-top:hover { background: #ff00cc; color: #fff; box-shadow: 0 0 15px #ff00cc; }
+
+  /* Back Button on Map */
+  #btn-back-map { position: fixed; bottom: 30px; right: 30px; background: #ff00cc; color: #fff; padding: 10px 25px; border-radius: 30px; font-weight: bold; border: none; box-shadow: 0 5px 20px rgba(255,0,204,0.5); cursor: pointer; z-index: 7000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  #btn-back-map.visible { opacity: 1; pointer-events: auto; }
+
   /* Map SVG Styles */
   #galaxy-svg { width: 100%; height: 100%; cursor: grab; }
   #galaxy-svg:active { cursor: grabbing; }
-  .dot { transition: fill 0.2s, r 0.2s, opacity 0.3s, stroke 0.2s; opacity: 0.8; stroke: none; cursor: pointer; }
+  .dot { transition: fill 0.2s, r 0.2s, opacity 0.8; stroke: none; cursor: pointer; }
   .dot:hover { stroke: #fff; stroke-width: 2px; opacity: 1; r: 6px; }
   .dot.selected { stroke: #fff !important; stroke-width: 3px !important; opacity: 1 !important; r: 8px !important; }
   .dot.dimmed { opacity: 0.05; }
@@ -140,29 +162,20 @@
       transition: opacity 0.5s; opacity: 0; pointer-events: none; 
   }
   body.mode-map #legend-container { opacity: 1; pointer-events: auto; }
-  
   #legend-list { flex: 1; overflow-y: auto; padding: 15px 15px 5px 15px; }
   #legend-footer { padding: 10px 15px; border-top: 1px solid #333; background: rgba(0,0,0,0.9); border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; flex-shrink: 0; }
-  
   .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; cursor: pointer; font-size: 11px; color: #ccc; transition: 0.2s; padding: 6px; border-radius: 6px; border: 1px solid transparent; }
   .legend-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
   .legend-item.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: bold; border-color: #ff00cc; transform: scale(1.05); box-shadow: 0 0 10px rgba(0,0,0,0.5); }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  
-  #btn-clear-filter { 
-      width: 100%; background: #222; color: #fff; border: 1px solid #555; 
-      padding: 8px; border-radius: 5px; font-size: 11px; 
-      cursor: pointer; text-align: center; font-weight: bold; transition: 0.2s; 
-  }
+  #btn-clear-filter { width: 100%; background: #222; color: #fff; border: 1px solid #555; padding: 8px; border-radius: 5px; font-size: 11px; cursor: pointer; text-align: center; font-weight: bold; transition: 0.2s; }
   #btn-clear-filter:hover { background: #ff00cc; border-color: #ff00cc; box-shadow: 0 0 10px #ff00cc; }
 
   /* Chart Modal */
   #chart-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 8000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
   #chart-content { width: 90%; max-width: 1000px; height: 90%; background: #111; border: 1px solid #333; border-radius: 12px; padding: 0; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-  
   #chart-header { padding: 20px 40px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #151515; }
   #chart-scroll-area { flex: 1; overflow-y: auto; padding: 40px; }
-  
   .chart-section { margin-bottom: 40px; width: 100%; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 25px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
   h2 { margin: 0; color: #fff; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
   h3 { margin: 0 0 20px 0; color: #00f2fe; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 10px; display: inline-block; width: 100%; font-weight: 600; letter-spacing: 0.5px; }
@@ -193,6 +206,7 @@
       <select id="filterGenre"><option value="">Genre</option></select>
       <select id="filterCountry"><option value="">Country</option></select>
       <select id="filterYear"><option value="">Year</option></select>
+      <button id="btn-reset-filters" title="Reset Filters">↻</button>
       <button id="btn-search">Search</button>
       <button id="btn-galaxy" class="btn-gradient"><span>●</span> VISUAL GALAXY</button>
     </div>
@@ -215,14 +229,12 @@
     <div id="poster-wall" style="position:relative; width:100%;"></div>
   </div>
   <div id="view-map"></div>
-  
   <div id="legend-container">
       <div id="legend-list"></div>
       <div id="legend-footer">
           <div id="btn-clear-filter">CLEAR FILTER</div>
       </div>
   </div>
-
   <div id="drawer">
     <div id="drawer-header">
       <span style="font-weight:bold; color:#fff; letter-spacing:1px;">CLUSTER RESULTS <span id="cluster-count" style="color:#aaa; font-size:12px; margin-left:10px; font-weight:normal;"></span><span style="color:#666; font-size:11px; margin-left:10px;">(Sorted by Box Office)</span></span>
@@ -235,9 +247,7 @@
 <div id="chart-modal">
   <div id="chart-content">
     <div id="chart-header">
-        <div style="display:flex; align-items:center; gap:20px;">
-            <h2>Cluster Analytics</h2>
-            </div>
+        <h2>Cluster Analytics</h2>
         <button id="btn-close-x" style="background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer;">✕</button>
     </div>
     <div id="chart-scroll-area">
@@ -246,7 +256,7 @@
         <div class="chart-section" id="chart-hist-container"><h3>IMDb Rating Distribution</h3></div>
         
         <div style="text-align:center; padding-bottom:40px;">
-            <button id="btn-bottom-back">BACK TO GALAXY</button>
+            <button id="btn-bottom-back">BACK</button>
         </div>
     </div>
   </div>
@@ -291,11 +301,10 @@ function initApp() {
   setupListeners();
 }
 
-// 2D Home
 function populateFilters() {
   const genres = new Set(), countries = new Set(), years = new Set();
   allData.forEach(d => {
-    if(d.Genres) d.Genres.forEach(g => genres.add(g));
+    if(d.Genres) d.Genres.forEach(g => { if(g && g.trim() !== "") genres.add(g); });
     if(d.Countries) d.Countries.forEach(c => countries.add(c));
     if(d.Year) years.add(d.Year);
   });
@@ -344,7 +353,6 @@ function renderHome(isReset=false) {
   if(displayedCount < currentDataHome.length && viewHome.scrollHeight <= viewHome.clientHeight + 100){ setTimeout(()=>renderHome(false), 300); }
 }
 
-// Galaxy Map
 function initGalaxyMap() {
     const container = d3.select('#view-map');
     const w = window.innerWidth, h = window.innerHeight;
@@ -361,7 +369,6 @@ function updateMapPoints(data) {
     const xExt = d3.extent(data, d=>d.x), yExt = d3.extent(data, d=>d.y);
     const xScale = d3.scaleLinear().domain(xExt).range([-1000, 1000]);
     const yScale = d3.scaleLinear().domain(yExt).range([-1000, 1000]);
-    
     const dots = gMap.selectAll('.dot').data(data, d => d.Title);
     dots.enter().append('circle').attr('class', 'dot').attr('r', 2.5)
         .attr('cx', d => xScale(d.x)).attr('cy', d => yScale(d.y))
@@ -448,20 +455,16 @@ function renderDrawer(data) {
     container.selectAll('*').remove();
     drawerData = data;
     d3.select('#cluster-count').text(`(Selected: ${data.length})`);
-    
     data.forEach(d => {
         let url = d.Poster_URL.replace('original', 'w185');
         container.append('img').attr('class', 'poster loaded').attr('src', url)
             .on('click', function(e){ 
                 e.stopPropagation();
-                // TOGGLE ZOOM Logic
                 const el = d3.select(this);
                 const isAct = el.classed('active');
                 container.selectAll('.poster').classed('active', false).style('transform', 'none');
-                
                 if(!isAct) {
                     el.classed('active', true);
-                    // Smart Position Logic
                     const rect = this.getBoundingClientRect();
                     const winW = window.innerWidth;
                     let tx = 0;
@@ -496,7 +499,6 @@ function showAnalysisCharts() {
     const avgData = Object.keys(gRevenue).map(g => [g, gRevenue[g]/gCount[g]]).filter(d=>d[1]>0).sort((a,b)=>b[1]-a[1]).slice(0, 8);
     drawHorizBar('#chart-bar-container', avgData);
     
-    // V16: Histogram Logic
     const ratings = drawerData.map(d=>d.IMDB_Rating).filter(r=>r>0);
     drawHistogram('#chart-hist-container', ratings);
 }
@@ -507,17 +509,13 @@ function drawSolidPie(sel, data) {
     const w=container.node().clientWidth, h=300;
     const radius = Math.min(w, h) / 2 * 0.7;
     const svg = container.append('svg').attr('width', w).attr('height', h).append('g').attr('transform', `translate(${w/2},${h/2})`);
-    
     const pie = d3.pie().value(d => d[1]).sort(null);
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
     const outerArc = d3.arc().innerRadius(radius * 1.1).outerRadius(radius * 1.1);
-    
     const total = d3.sum(data, d=>d[1]);
     
     svg.selectAll('path').data(pie(data)).enter().append('path')
-       .attr('d', arc).attr('fill', d => genreColors[d.data[0]] || '#999')
-       .attr('stroke', '#151515').style('stroke-width', '2px');
-       
+       .attr('d', arc).attr('fill', d => genreColors[d.data[0]] || '#999').attr('stroke', '#151515').style('stroke-width', '2px');
     const labelGroup = svg.append('g');
     const slices = pie(data);
     slices.forEach(d => {
@@ -553,31 +551,14 @@ function drawHorizBar(sel, data) {
 function drawHistogram(sel, data) {
     const container = d3.select(sel); container.selectAll('*').remove();
     container.append('h3').text("IMDb Rating Distribution");
-    const w=container.node().clientWidth, h=300, m={t:20,r:20,b:30,l:40};
+    const w=container.node().clientWidth, h=250, m={t:20,r:20,b:30,l:40};
     const svg = container.append('svg').attr('width', w).attr('height', h);
-    
-    // Scale 0-10 rating
     const x = d3.scaleLinear().domain([0, 10]).range([m.l, w-m.r]);
     const bins = d3.bin().domain(x.domain()).thresholds(20)(data);
     const y = d3.scaleLinear().domain([0, d3.max(bins, d=>d.length)]).range([h-m.b, m.t]);
-    
-    const bar = svg.append('g').selectAll('g').data(bins).enter().append('g')
-        .attr('transform', d=>`translate(${x(d.x0)},${y(d.length)})`);
-        
-    bar.append('rect')
-       .attr('x', 1)
-       .attr('width', d=>Math.max(0, x(d.x1)-x(d.x0)-1))
-       .attr('height', d=>h-m.b-y(d.length))
-       .attr('fill', '#ff69b4').attr('rx', 2); // Pink bars
-       
-    // Labels on top
-    bar.append('text')
-       .attr('dy', '-5px')
-       .attr('x', d=>(x(d.x1)-x(d.x0))/2)
-       .attr('text-anchor', 'middle')
-       .text(d=>d.length > 0 ? d.length : '')
-       .style('fill', '#fff').style('font-size', '10px');
-       
+    const bar = svg.append('g').selectAll('g').data(bins).enter().append('g').attr('transform', d=>`translate(${x(d.x0)},${y(d.length)})`);
+    bar.append('rect').attr('x', 1).attr('width', d=>Math.max(0, x(d.x1)-x(d.x0)-2)).attr('height', d=>h-m.b-y(d.length)).attr('fill', '#ff69b4').attr('rx', 2);
+    bar.append('text').attr('dy', '-5px').attr('x', d=>(x(d.x1)-x(d.x0))/2).attr('text-anchor', 'middle').text(d=>d.length > 0 ? d.length : '').style('fill', '#fff').style('font-size', '10px');
     svg.append('g').attr('transform', `translate(0,${h-m.b})`).call(d3.axisBottom(x)).attr('color','#ccc');
 }
 
@@ -595,6 +576,13 @@ function exitMapMode() {
     renderHome(true);
 }
 
+function resetFilters() {
+    document.getElementById('filterGenre').selectedIndex = 0;
+    document.getElementById('filterCountry').selectedIndex = 0;
+    document.getElementById('filterYear').selectedIndex = 0;
+    document.getElementById('btn-search').click();
+}
+
 function setupListeners() {
     d3.select('#btn-search').on('click', ()=>{
         const g = d3.select('#filterGenre').property('value');
@@ -602,20 +590,17 @@ function setupListeners() {
         const y = d3.select('#filterYear').property('value');
         currentDataHome = allData.filter(d => {
             let ok=true;
-            if(g && (!d.Genres || !d.Genres.includes(g))) ok=false;
-            if(c && (!d.Countries || !d.Countries.includes(c))) ok=false;
-            if(y && d.Year.toString()!=y) ok=false;
+            if(g && g !== "Genre" && (!d.Genres || !d.Genres.includes(g))) ok=false;
+            if(c && c !== "Country" && (!d.Countries || !d.Countries.includes(c))) ok=false;
+            if(y && y !== "Year" && d.Year.toString()!=y) ok=false;
             return ok;
         });
         currentDataHome.sort(()=>0.5-Math.random());
         renderHome(true);
     });
     
-    document.getElementById('view-home').addEventListener('scroll', function() {
-        if((this.scrollTop + this.clientHeight) >= this.scrollHeight - 800) {
-            renderHome(false);
-        }
-    });
+    d3.select('#btn-reset-filters').on('click', resetFilters);
+    document.getElementById('view-home').addEventListener('scroll', function() { if((this.scrollTop + this.clientHeight) >= this.scrollHeight - 800) renderHome(false); });
     
     document.addEventListener('click', (e)=>{ 
         if(!e.target.classList.contains('poster')) {
@@ -635,9 +620,8 @@ function setupListeners() {
     d3.select('#btn-analyze').on('click', showAnalysisCharts);
     d3.select('#btn-bottom-back').on('click', closeAnalysis);
     d3.select('#btn-close-x').on('click', closeAnalysis);
-    window.addEventListener('resize', ()=>{
-        d3.select('#galaxy-svg').attr('width', window.innerWidth).attr('height', window.innerHeight);
-    });
+    
+    window.addEventListener('resize', ()=>{ d3.select('#galaxy-svg').attr('width', window.innerWidth).attr('height', window.innerHeight); });
 }
 
 function showTooltip(d, event) {
